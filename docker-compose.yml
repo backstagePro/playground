@@ -24,3 +24,10 @@ services:
 
 volumes:
   dbdata:
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.2.0/24
