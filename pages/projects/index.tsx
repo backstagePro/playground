@@ -25,10 +25,10 @@ export default function Index(){
 
   return (
     <Card style={{width: '100%'}} title="Project list">
-      <Table dataSource={dataSource} columns={columns} size="small" />
       <Link href="/projects/import">
         <Button>Import new project</Button>     
       </Link>
+      <Table dataSource={dataSource} columns={columns} size="small" />
     </Card>
   )
 }
