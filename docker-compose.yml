@@ -1,0 +1,26 @@
+version: '3'
+services:
+  backstage_db:
+    image: mongo:4.1.8-xenial
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
+    volumes:
+      - dbdata:/data/db
+    ports:
+      - 7201:27017
+
+  playground:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 3000:3000
+      - 9229:9229
+    volumes:
+      - ./:/usr/src/app
+
+volumes:
+  dbdata:
