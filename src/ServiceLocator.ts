@@ -27,18 +27,19 @@
      * 
      * @param serviceName - the name of the service. All services begin with `SERVICE_`
      */
-    public static get<T, P>(serviceName: string, params: P): T {
-        // if the service is singleton and it is instantiated already, return it
+    public static async get<T, P>(serviceName: string, params: P): Promise<T> {
+
+        // if the service is instantiated already, return it
         if (ServiceLocator.lazyLoadedServices[serviceName] !== void (0)) {
             return ServiceLocator.lazyLoadedServices[serviceName];
         }
 
         if (ServiceLocator.services[serviceName] !== void (0)) {
 
-            // if the service is singleton and it is not instantiated yet
+            // if the service is function and it is not instantiated yet
             if (typeof ServiceLocator.services[serviceName].service === 'function') {
                     
-                let service = ServiceLocator.services[serviceName].service(params);
+                let service = await ServiceLocator.services[serviceName].service(params);
 
                 if(ServiceLocator.services[serviceName].options.singleton === true){
                     ServiceLocator.lazyLoadedServices[serviceName] = service;

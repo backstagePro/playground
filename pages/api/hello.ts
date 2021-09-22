@@ -15,7 +15,7 @@ export default async function handler(
 
   try {
 
-    let repo = ServiceLocator.get<SERVICE_REPOSITORY_FACTORY, any>(SERVICE_REPOSITORY_FACTORY, null);
+    let repo = await ServiceLocator.get<SERVICE_REPOSITORY_FACTORY, any>(SERVICE_REPOSITORY_FACTORY, null);
 
     let project = await repo.getRepository('project');
 

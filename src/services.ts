@@ -1,5 +1,6 @@
 import RepositoryFactory from "./model/RepositoryFactory";
 import ServiceLocator from "./ServiceLocator";
+import ArtefactFinder from "./services/ArtefactFinder";
 import MongoDbAdapter from "./services/db/MongoDbAdapter";
 import DirectoryManager from "./services/directory/DirectoryManager";
 import ProjectLoader from "./services/ProjectLoader";
@@ -12,7 +13,7 @@ import ProjectLoader from "./services/ProjectLoader";
 export let SERVICE_PROJECT_LOADER: 'SERVICE_PROJECT_LOADER' = 'SERVICE_PROJECT_LOADER';
 export type SERVICE_PROJECT_LOADER = ProjectLoader;
 
-ServiceLocator.set(SERVICE_PROJECT_LOADER, () => {
+ServiceLocator.set(SERVICE_PROJECT_LOADER, async () => {
     
     return new ProjectLoader();
 
@@ -27,22 +28,23 @@ ServiceLocator.set(SERVICE_PROJECT_LOADER, () => {
 export let SERVICE_METADATA_CREATOR: 'SERVICE_METADATA_CREATOR' = 'SERVICE_METADATA_CREATOR';
 export type SERVICE_METADATA_CREATOR = ProjectLoader;
 
-ServiceLocator.set(SERVICE_METADATA_CREATOR, () => {
+ServiceLocator.set(SERVICE_METADATA_CREATOR, async () => {
     
     return new ProjectLoader();
 
 });
 
 /**
- * Abstraction on top of directory
+ * Abstraction on top of directory.
  * 
- *  ***All paths are relative to BS_CONTAINER_SITES_FOLDER env variable***
+ * If given directory doesn't exist, it will be created.
+ * 
  */
 export let SERVICE_DIRECTORY: 'SERVICE_DIRECTORY' = 'SERVICE_DIRECTORY';
 export type SERVICE_DIRECTORY = DirectoryManager;
 
 
-ServiceLocator.set(SERVICE_DIRECTORY, () => {
+ServiceLocator.set(SERVICE_DIRECTORY, async () => {
     
     return new DirectoryManager();
 });
@@ -55,7 +57,7 @@ export let SERVICE_MONGODB_ADAPTER: 'SERVICE_MONGODB_ADAPTER' = 'SERVICE_MONGODB
 export type SERVICE_MONGODB_ADAPTER = MongoDbAdapter;
 
 
-ServiceLocator.set(SERVICE_MONGODB_ADAPTER, () => {
+ServiceLocator.set(SERVICE_MONGODB_ADAPTER, async () => {
     
     return new MongoDbAdapter();
 });
@@ -69,7 +71,33 @@ export let SERVICE_REPOSITORY_FACTORY: 'SERVICE_REPOSITORY_FACTORY' = 'SERVICE_R
 export type SERVICE_REPOSITORY_FACTORY = RepositoryFactory;
 
 
-ServiceLocator.set(SERVICE_REPOSITORY_FACTORY, () => {
+ServiceLocator.set(SERVICE_REPOSITORY_FACTORY, async () => {
     
-    return new RepositoryFactory( ServiceLocator.get<SERVICE_MONGODB_ADAPTER, any>(SERVICE_MONGODB_ADAPTER, null) );
+    return new RepositoryFactory( 
+        (await ServiceLocator.get<SERVICE_MONGODB_ADAPTER, any>(SERVICE_MONGODB_ADAPTER, null)) 
+    );
 });
+
+
+/**
+ * Used to collect all artefacts from given project 
+ *
+ */
+export let SERVICE_ARTEFACT_FINDER: 'SERVICE_ARTEFACT_FINDER' = 'SERVICE_ARTEFACT_FINDER';
+export type SERVICE_ARTEFACT_FINDER = ArtefactFinder;
+export type SERVICE_ARTEFACT_FINDER_PARAMS = {
+    projectPath: string;
+}
+
+
+ServiceLocator.set(SERVICE_ARTEFACT_FINDER, async (params: SERVICE_ARTEFACT_FINDER_PARAMS) => {
+
+    let directoryProvider = await ServiceLocator
+        .get<SERVICE_DIRECTORY, any>(SERVICE_DIRECTORY, null);
+
+
+    let directory = await directoryProvider.getDirectory(params.projectPath)
+    
+    return new ArtefactFinder(directory);
+    
+}, {singleton: false});
