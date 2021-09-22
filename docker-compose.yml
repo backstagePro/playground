@@ -1,6 +1,6 @@
 version: '3'
 services:
-  backstage_db:
+  playground_db:
     image: mongo:4.1.8-xenial
     restart: unless-stopped
     env_file: .env
@@ -16,6 +16,10 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+    environment:
+      - MONGO_USERNAME=$MONGO_USERNAME
+      - MONGO_PASSWORD=$MONGO_PASSWORD
+      - DB_URL=playground_db
     ports:
       - 3000:3000
     volumes:

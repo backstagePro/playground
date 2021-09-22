@@ -8,6 +8,9 @@ export default class ProjectLoader {
 
 
     /**
+     * Load project into the system.
+     * This will try to find all the `.playground.ts` files from the system.
+     * Also will load information from them, which will be saved in MongoDB.
      * 
      * @param projectPath 
      */

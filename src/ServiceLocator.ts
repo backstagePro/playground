@@ -27,7 +27,7 @@
      * 
      * @param serviceName - the name of the service. All services begin with `SERVICE_`
      */
-    public static get<T, P>(serviceName: string, params: P): T | null {
+    public static get<T, P>(serviceName: string, params: P): T {
         // if the service is singleton and it is instantiated already, return it
         if (ServiceLocator.lazyLoadedServices[serviceName] !== void (0)) {
             return ServiceLocator.lazyLoadedServices[serviceName];
@@ -50,6 +50,6 @@
             return ServiceLocator.services[serviceName];
         }
 
-        return null;
+        throw new Error("Missing service with name " + serviceName)
     }
 }

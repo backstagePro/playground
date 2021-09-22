@@ -1,5 +1,6 @@
+import RepositoryFactory from "./model/RepositoryFactory";
 import ServiceLocator from "./ServiceLocator";
-import Directory from "./services/directory/Directory";
+import MongoDbAdapter from "./services/db/MongoDbAdapter";
 import DirectoryManager from "./services/directory/DirectoryManager";
 import ProjectLoader from "./services/ProjectLoader";
 
@@ -26,7 +27,7 @@ ServiceLocator.set(SERVICE_PROJECT_LOADER, () => {
 export let SERVICE_METADATA_CREATOR: 'SERVICE_METADATA_CREATOR' = 'SERVICE_METADATA_CREATOR';
 export type SERVICE_METADATA_CREATOR = ProjectLoader;
 
-ServiceLocator.set(SERVICE_PROJECT_LOADER, () => {
+ServiceLocator.set(SERVICE_METADATA_CREATOR, () => {
     
     return new ProjectLoader();
 
@@ -44,4 +45,31 @@ export type SERVICE_DIRECTORY = DirectoryManager;
 ServiceLocator.set(SERVICE_DIRECTORY, () => {
     
     return new DirectoryManager();
+});
+
+/**
+ * Mongodb Adapter
+ * 
+ */
+export let SERVICE_MONGODB_ADAPTER: 'SERVICE_MONGODB_ADAPTER' = 'SERVICE_MONGODB_ADAPTER';
+export type SERVICE_MONGODB_ADAPTER = MongoDbAdapter;
+
+
+ServiceLocator.set(SERVICE_MONGODB_ADAPTER, () => {
+    
+    return new MongoDbAdapter();
+});
+
+
+/**
+ * Used to get entity repository 
+ *
+ */
+export let SERVICE_REPOSITORY_FACTORY: 'SERVICE_REPOSITORY_FACTORY' = 'SERVICE_REPOSITORY_FACTORY';
+export type SERVICE_REPOSITORY_FACTORY = RepositoryFactory;
+
+
+ServiceLocator.set(SERVICE_REPOSITORY_FACTORY, () => {
+    
+    return new RepositoryFactory( ServiceLocator.get<SERVICE_MONGODB_ADAPTER, any>(SERVICE_MONGODB_ADAPTER, null) );
 });
