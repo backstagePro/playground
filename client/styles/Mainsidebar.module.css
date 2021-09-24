@@ -1,0 +1,21 @@
+.navbar {
+  left: 0px;
+  top: 0px;
+  position: sticky;
+  background-color: var(--secondary-color);
+  color: white;
+  height: 100vh;
+  width: 100px;
+}
+
+.navbarMenu {
+  padding: 10px;
+}
+
+.navbarMenu li {
+  cursor: pointer;
+}
+
+.navbarMenu li a {
+  color: white;
+}
